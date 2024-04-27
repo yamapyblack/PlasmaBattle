@@ -18,13 +18,16 @@ contract PlasmaBattle is Ownable {
         Result result;
     }
 
+    event BattleIdIncremented(uint battleId);
+
     /*//////////////////////////////////////////////////////////////
                                 STORAGE
     //////////////////////////////////////////////////////////////*/
-    // mapping(txHash => info)
-    mapping(bytes32 => Battle) battleRecord;
+    uint public battleId;
+    // mapping(battlId => info)
+    mapping(uint => Battle) public battleRecord;
     // mapping(playerAddress => stage)
-    mapping(address => uint) playerStage;
+    mapping(address => uint) public playerStage;
 
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
@@ -38,31 +41,43 @@ contract PlasmaBattle is Ownable {
     function startBattle(
         uint[5] memory _playerUnits,
         uint[5] memory _enemyUnits
-    ) external {
-        battleRecord[blockhash(block.number)] = Battle(
+    ) external returns (uint) {
+        battleId++;
+        emit BattleIdIncremented(battleId);
+        battleRecord[battleId] = Battle(
             msg.sender,
             _playerUnits,
             _enemyUnits,
             Result.NOT_YET
         );
+        return battleId;
     }
 
     function confirmResult(
-        bytes32 _txHash,
+        uint _battleId,
         Result _result,
         bytes memory _signature
     ) external {
         // Construct the message hash
-        bytes32 messageHash = keccak256(abi.encodePacked(_txHash, _result));
+        bytes32 messageHash = keccak256(abi.encodePacked(_battleId, _result));
         require(
             ECDSA.recover(messageHash, _signature) == owner(),
             "Invalid signature"
         );
-        battleRecord[_txHash].result = _result;
+        battleRecord[_battleId].result = _result;
     }
+
     /*//////////////////////////////////////////////////////////////
                              EXTERNAL VIEW
     //////////////////////////////////////////////////////////////*/
+    function getBothUnits(
+        uint _battleId
+    ) external view returns (uint[5] memory, uint[5] memory) {
+        return (
+            battleRecord[_battleId].playerUnits,
+            battleRecord[_battleId].enemyUnits
+        );
+    }
 
     /*//////////////////////////////////////////////////////////////
                              INTERNAL VIEW
