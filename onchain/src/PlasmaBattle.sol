@@ -63,10 +63,7 @@ contract PlasmaBattle is Ownable {
         bytes32 digest = MessageHashUtils.toEthSignedMessageHash(
             keccak256(abi.encodePacked(_battleId, _result))
         );
-        require(
-            ECDSA.recover(digest, _signature) == owner(),
-            "Invalid signature"
-        );
+        require(isValidSignature(digest, _signature), "Invalid signature");
         battleRecord[_battleId].result = _result;
     }
 
@@ -94,7 +91,7 @@ contract PlasmaBattle is Ownable {
     function isValidSignature(
         bytes32 hash,
         bytes memory signature
-    ) internal view returns (bool) {
+    ) public view returns (bool) {
         return ECDSA.recover(hash, signature) == owner();
     }
 

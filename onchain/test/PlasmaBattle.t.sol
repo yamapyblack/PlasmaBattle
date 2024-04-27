@@ -5,6 +5,7 @@ import {console2} from "forge-std/console2.sol";
 import {Test} from "forge-std/Test.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 import {PlasmaBattle} from "../src/PlasmaBattle.sol";
 
@@ -18,9 +19,10 @@ contract PlasmaBattleTest is Test {
 
     /// @dev A function invoked before each test case is run.
     function setUp() public virtual {
-        signerPrivateKey = 0xabc123;
-
+        signerPrivateKey = vm.envUint("PRIVATE_KEY");
         signer = vm.addr(signerPrivateKey);
+        console2.log("signer: ", signer);
+
         vm.prank(signer);
         battle = new PlasmaBattle();
     }
