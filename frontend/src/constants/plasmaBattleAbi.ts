@@ -13,11 +13,7 @@ export const PlasmaBattleAbi: any = [
     inputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     outputs: [
       { name: "player", type: "address", internalType: "address" },
-      {
-        name: "result",
-        type: "uint8",
-        internalType: "enum PlasmaBattle.Result",
-      },
+      { name: "result", type: "uint8", internalType: "uint8" },
     ],
     stateMutability: "view",
   },
@@ -26,11 +22,7 @@ export const PlasmaBattleAbi: any = [
     name: "confirmResult",
     inputs: [
       { name: "_battleId", type: "uint256", internalType: "uint256" },
-      {
-        name: "_result",
-        type: "uint8",
-        internalType: "enum PlasmaBattle.Result",
-      },
+      { name: "_result", type: "uint8", internalType: "uint8" },
       { name: "_signature", type: "bytes", internalType: "bytes" },
     ],
     outputs: [],

@@ -24,10 +24,10 @@ export const postBattleAllApi = async (
   }
 };
 
-export const getBattleResult = async (txHash: string) => {
+export const getBattleResult = async (_battleId: number) => {
   console.log("getBattleResult");
   //url parameter craft_id
-  const url = `/api/battleResult/${txHash}`;
+  const url = `/api/battleResult/?battleId=${_battleId}`;
   try {
     const response = await fetch(url, {
       headers: {

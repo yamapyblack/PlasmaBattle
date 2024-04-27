@@ -13,6 +13,7 @@ import {
   initEnemyMembers,
   type Unit,
 } from "../../lib/contexts/UnitsContext";
+import { ethers, AbiCoder } from "ethers";
 
 const config = createConfig({
   chains: [scrollSepolia],
@@ -30,16 +31,16 @@ export default async function handler(
   if (request.method === "GET") {
     const battleId = request.query.battleId as string;
     console.log("battleId", battleId);
-    const result = await readContract(config, {
+    const _resData = await readContract(config, {
       address: addresses.PlasmaBattle as `0x${string}`,
       abi: PlasmaBattleAbi,
       functionName: "getBothUnits",
       args: [battleId],
     });
-    console.log("result", result);
+    console.log("result", _resData);
     //BitInt to Number
-    const playerMembers = result![0].map((v) => Number(v));
-    const enemyMembers = result![1].map((v) => Number(v));
+    const playerMembers = _resData![0].map((v) => Number(v));
+    const enemyMembers = _resData![1].map((v) => Number(v));
 
     // return response.status(200).json([playerMembers, enemyMembers]);
 
@@ -93,6 +94,24 @@ export default async function handler(
       loopCount++;
     }
 
-    return response.status(200).json({ result: _result });
+    // Assuming you have the owner's private key
+    const privateKey = process.env.PRIVATE_KEY!;
+    const wallet = new ethers.Wallet(privateKey);
+    console.log("wallet.address", wallet.address);
+    console.log("battleId", BigInt(battleId));
+    console.log("result", BigInt(_result));
+    const messageHash = ethers.keccak256(
+      AbiCoder.defaultAbiCoder().encode(
+        ["uint", "uint8"],
+        [BigInt(battleId), BigInt(_result)]
+      )
+    );
+    const signature = await wallet.signMessage(messageHash);
+
+    console.log("signature", signature);
+
+    return response
+      .status(200)
+      .json({ battleId: battleId, result: _result, signature: signature });
   }
 }
