@@ -5,17 +5,17 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract PlasmaBattle is Ownable {
-    enum Result {
-        NOT_YET,
-        WIN,
-        LOSE,
-        DRAW
-    }
+    // enum Result {
+    //     NOT_YET,
+    //     WIN,
+    //     LOSE,
+    //     DRAW
+    // }
     struct Battle {
         address player;
         uint[5] playerUnits;
         uint[5] enemyUnits;
-        Result result;
+        uint8 result;
     }
 
     event BattleIdIncremented(uint battleId);
@@ -48,14 +48,14 @@ contract PlasmaBattle is Ownable {
             msg.sender,
             _playerUnits,
             _enemyUnits,
-            Result.NOT_YET
+            0 // Result.NOT_YET
         );
         return battleId;
     }
 
     function confirmResult(
         uint _battleId,
-        Result _result,
+        uint8 _result,
         bytes memory _signature
     ) external {
         // Construct the message hash
@@ -77,6 +77,16 @@ contract PlasmaBattle is Ownable {
             battleRecord[_battleId].playerUnits,
             battleRecord[_battleId].enemyUnits
         );
+    }
+
+    function recover(
+        uint256 _battleId,
+        uint8 _result,
+        bytes memory _signature
+    ) external pure returns (address) {
+        // Construct the message hash
+        bytes32 messageHash = keccak256(abi.encodePacked(_battleId, _result));
+        return ECDSA.recover(messageHash, _signature);
     }
 
     /*//////////////////////////////////////////////////////////////
