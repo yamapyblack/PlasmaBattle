@@ -13,7 +13,7 @@ import {
   initEnemyMembers,
   type Unit,
 } from "../../lib/contexts/UnitsContext";
-import { ethers, AbiCoder } from "ethers";
+import { ethers } from "ethers";
 
 const config = createConfig({
   chains: [scrollSepolia],
@@ -30,6 +30,7 @@ export default async function handler(
 
   if (request.method === "GET") {
     const battleId = request.query.battleId as string;
+
     console.log("battleId", battleId);
     const _resData = await readContract(config, {
       address: addresses.PlasmaBattle as `0x${string}`,
@@ -37,7 +38,7 @@ export default async function handler(
       functionName: "getBothUnits",
       args: [battleId],
     });
-    console.log("result", _resData);
+    console.log("_resData", _resData);
     //BitInt to Number
     const playerMembers = _resData![0].map((v) => Number(v));
     const enemyMembers = _resData![1].map((v) => Number(v));
@@ -45,7 +46,7 @@ export default async function handler(
     // return response.status(200).json([playerMembers, enemyMembers]);
 
     //Response parameter
-    let _result: Result = Result.NOT_YET;
+    let _result = 0;
 
     //Construct battleClass
     let playerMembersUnits: Unit[] = [];
@@ -95,18 +96,19 @@ export default async function handler(
     }
 
     // Assuming you have the owner's private key
+
+    // Assuming you have the private key and the battleId and result
     const privateKey = process.env.PRIVATE_KEY!;
-    const wallet = new ethers.Wallet(privateKey);
-    console.log("wallet.address", wallet.address);
+    const signer = new ethers.Wallet(privateKey);
+    console.log("signer", signer);
     console.log("battleId", BigInt(battleId));
     console.log("result", BigInt(_result));
-    const messageHash = ethers.keccak256(
-      AbiCoder.defaultAbiCoder().encode(
-        ["uint", "uint8"],
-        [BigInt(battleId), BigInt(_result)]
-      )
+    const messageHash = ethers.solidityPackedKeccak256(
+      ["uint", "uint8"],
+      [battleId, _result]
     );
-    const signature = await wallet.signMessage(messageHash);
+    console.log("messageHash", messageHash);
+    const signature = await signer.signMessage(ethers.getBytes(messageHash));
 
     console.log("signature", signature);
 
