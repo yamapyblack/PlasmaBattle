@@ -1,6 +1,6 @@
 import type { AppProps } from "next/app";
 import { WagmiProvider, createConfig, http } from "wagmi";
-import { baseSepolia, scrollSepolia } from "wagmi/chains";
+import { scrollSepolia } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import "../styles/global.css";
@@ -10,7 +10,7 @@ const config = createConfig(
     // Your dApps chains
     chains: [scrollSepolia],
     transports: {
-      [baseSepolia.id]: http(scrollSepolia.rpcUrls.default.http[0]),
+      [scrollSepolia.id]: http(scrollSepolia.rpcUrls.default.http[0]),
     },
     // Required API Keys
     walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,

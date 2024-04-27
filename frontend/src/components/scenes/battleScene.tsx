@@ -51,29 +51,7 @@ const BattleScene = ({ setScene, setResult }) => {
 
   const [isCoverVisible, setCoverVisible] = useState(true); // New state variable
   const { data: hash, writeContract } = useWriteContract();
-  const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash: hash });
-
-  /**============================
- * Onchain
- ============================*/
-  const startBattle = async () => {
-    writeContract(
-      {
-        address: addresses.PlasmaBattle as `0x${string}`,
-        abi: PlasmaBattleAbi,
-        functionName: "startBattle",
-        args: [
-          playerUnits.map((unit) => unit.id),
-          enemyUnits.map((unit) => unit.id),
-        ],
-      },
-      {
-        onSuccess: () => {
-          setCoverVisible(false);
-        },
-      }
-    );
-  };
+  const { isLoading } = useWaitForTransactionReceipt({ hash: hash });
 
   /**============================
  * useEffect
@@ -252,9 +230,6 @@ const BattleScene = ({ setScene, setResult }) => {
     }
 
     for (let i = 0; i < toIndexes.length; i++) {
-      // const _unit = isToPlayer
-      //   ? playerUnits[toIndexes[i]]
-      //   : enemyUnits[toIndexes[i]];
       switch (skillEffect) {
         case SKILL_EFFECT.BuffAttack:
           await buffAttack(isToPlayer, toIndexes[i], values[i]);
@@ -435,20 +410,47 @@ const BattleScene = ({ setScene, setResult }) => {
   /**============================
  * Functions(Flow)
  ============================*/
+
   const startOfBattle = async () => {
     console.log("startOfBattle");
-    setCoverVisible(false); // Hide cover when game starts
 
-    //Execute skill from behind member
-    for (let i = playerUnits.length - 1; i >= 0; i--) {
-      await _executeSkill(SKILL_TIMING.StartOfBattle, true, i);
-    }
+    writeContract(
+      {
+        address: addresses.PlasmaBattle as `0x${string}`,
+        abi: PlasmaBattleAbi,
+        functionName: "startBattle",
+        args: [
+          [0, 1, 2, 3, 4].map((i) => {
+            if (playerUnits[i] === undefined) return 0;
+            return playerUnits[i].id;
+          }),
+          [0, 1, 2, 3, 4].map((i) => {
+            if (enemyUnits[i] === undefined) return 0;
+            return enemyUnits[i].id;
+          }),
+        ],
+      },
+      {
+        onSuccess: () => {
+          console.log("onSuccess");
+          setCoverVisible(false);
+          setPhase(PHASE.BEFORE_ATTACK);
+        },
+        onError: (e) => {
+          console.error(e);
+        },
+      }
+    );
 
-    for (let i = enemyUnits.length - 1; i >= 0; i--) {
-      await _executeSkill(SKILL_TIMING.StartOfBattle, false, i);
-    }
+    //TODO revive
+    // //Execute skill from behind member
+    // for (let i = playerUnits.length - 1; i >= 0; i--) {
+    //   await _executeSkill(SKILL_TIMING.StartOfBattle, true, i);
+    // }
 
-    setPhase(PHASE.BEFORE_ATTACK);
+    // for (let i = enemyUnits.length - 1; i >= 0; i--) {
+    //   await _executeSkill(SKILL_TIMING.StartOfBattle, false, i);
+    // }
   };
 
   const goNextAction = async () => {
@@ -480,18 +482,25 @@ const BattleScene = ({ setScene, setResult }) => {
   return (
     <>
       <div className="flex flex-col items-center m-auto">
-        {isCoverVisible && (
-          <div
-            className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30"
-            style={{ zIndex: 999 }}
-          >
-            <button
-              className="bg-sub font-bold px-16 py-3 rounded-md text-decoration-none"
-              onClick={startOfBattle}
+        {(isCoverVisible || isLoading) && (
+          <>
+            <div
+              className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30"
+              style={{ zIndex: 999 }}
             >
-              Start
-            </button>
-          </div>
+              <div className="text-center">
+                <button
+                  className="bg-sub font-bold px-16 py-3 rounded-md text-decoration-none"
+                  onClick={() => {
+                    if (isLoading) return;
+                    startOfBattle();
+                  }}
+                >
+                  {isLoading ? "Loading..." : "Start"}
+                </button>
+              </div>
+            </div>
+          </>
         )}
         <header className="p-2 w-3/4">
           <div className="flex justify-between items-center w-20 rounded-md bg-darkgray mt-4 pl-2 pr-2">
