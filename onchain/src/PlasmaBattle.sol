@@ -3,6 +3,7 @@ pragma solidity 0.8.23;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
 contract PlasmaBattle is Ownable {
     // enum Result {
@@ -59,9 +60,11 @@ contract PlasmaBattle is Ownable {
         bytes memory _signature
     ) external {
         // Construct the message hash
-        bytes32 messageHash = keccak256(abi.encodePacked(_battleId, _result));
+        bytes32 digest = MessageHashUtils.toEthSignedMessageHash(
+            keccak256(abi.encodePacked(_battleId, _result))
+        );
         require(
-            ECDSA.recover(messageHash, _signature) == owner(),
+            ECDSA.recover(digest, _signature) == owner(),
             "Invalid signature"
         );
         battleRecord[_battleId].result = _result;
@@ -70,6 +73,12 @@ contract PlasmaBattle is Ownable {
     /*//////////////////////////////////////////////////////////////
                              EXTERNAL VIEW
     //////////////////////////////////////////////////////////////*/
+    function getBattleInfo(
+        uint _battleId
+    ) external view returns (address, uint8) {
+        return (battleRecord[_battleId].player, battleRecord[_battleId].result);
+    }
+
     function getBothUnits(
         uint _battleId
     ) external view returns (uint[5] memory, uint[5] memory) {
@@ -79,19 +88,15 @@ contract PlasmaBattle is Ownable {
         );
     }
 
-    function recover(
-        uint256 _battleId,
-        uint8 _result,
-        bytes memory _signature
-    ) external pure returns (address) {
-        // Construct the message hash
-        bytes32 messageHash = keccak256(abi.encodePacked(_battleId, _result));
-        return ECDSA.recover(messageHash, _signature);
-    }
-
     /*//////////////////////////////////////////////////////////////
                              INTERNAL VIEW
     //////////////////////////////////////////////////////////////*/
+    function isValidSignature(
+        bytes32 hash,
+        bytes memory signature
+    ) internal view returns (bool) {
+        return ECDSA.recover(hash, signature) == owner();
+    }
 
     /*//////////////////////////////////////////////////////////////
                             INTERNAL UPDATE
