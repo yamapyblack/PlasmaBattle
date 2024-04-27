@@ -16,6 +16,7 @@ export enum Scene {
 const Ingame = () => {
   const [scene, setScene] = useState(Scene.Battle);
   const [result, setResult] = useState(Result.NOT_YET);
+  const [txHash, setTxHash] = useState<string>("");
   const { isConnected } = useAccount();
 
   return (
@@ -25,9 +26,13 @@ const Ingame = () => {
           {scene === Scene.Edit ? (
             <EditScene setScene={setScene} />
           ) : scene === Scene.Battle ? (
-            <BattleScene setScene={setScene} setResult={setResult} />
+            <BattleScene
+              setScene={setScene}
+              setResult={setResult}
+              setTxHash={setTxHash}
+            />
           ) : (
-            <OverScene setScene={setScene} result={result} />
+            <OverScene setScene={setScene} result={result} txHash={txHash} />
           )}
         </UnitsProvider>
       ) : (

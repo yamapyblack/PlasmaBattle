@@ -1,4 +1,4 @@
 const addresses = {
-  PlasmaBattle: "0x15EBaAD8717A6B71116ffAF1E0FD4A3b4DE0F96C",
+  PlasmaBattle: "0x05421Fe1993581536da827f5D5C73Bb667b55dd5",
 };
 export default addresses;

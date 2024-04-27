@@ -1,7 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import Image from "next/image";
 import { Scene } from "../../pages/index";
-import { enemyMembersByStage } from "../../lib/data/init";
 import UnitsComponent from "../../components/ingame/UnitsComponent";
 import {
   Result,
@@ -30,7 +29,7 @@ enum PHASE {
   ATTACKING,
 }
 
-const BattleScene = ({ setScene, setResult }) => {
+const BattleScene = ({ setScene, setResult, setTxHash }) => {
   /**============================
  * useState, useContext
  ============================*/
@@ -51,7 +50,9 @@ const BattleScene = ({ setScene, setResult }) => {
 
   const [isCoverVisible, setCoverVisible] = useState(true); // New state variable
   const { data: hash, writeContract } = useWriteContract();
-  const { isLoading } = useWaitForTransactionReceipt({ hash: hash });
+  const { data: reciptData, isLoading } = useWaitForTransactionReceipt({
+    hash: hash,
+  });
 
   /**============================
  * useEffect
@@ -76,6 +77,20 @@ const BattleScene = ({ setScene, setResult }) => {
     };
     judge();
   }, [isPlayerDead, isEnemyDead, setResult, setScene]);
+
+  useEffect(() => {
+    // Set the transaction hash when it changes
+    if (hash) {
+      setTxHash(hash);
+    }
+  }, [hash, setTxHash]);
+
+  useEffect(() => {
+    // Set the transaction receipt data when it changes
+    if (reciptData) {
+      console.log("Transaction receipt data", reciptData);
+    }
+  }, [reciptData]);
 
   /**============================
  * Logic

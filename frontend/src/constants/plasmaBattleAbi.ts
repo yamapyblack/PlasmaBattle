@@ -2,9 +2,30 @@ export const PlasmaBattleAbi: any = [
   { type: "constructor", inputs: [], stateMutability: "nonpayable" },
   {
     type: "function",
+    name: "battleId",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "battleRecord",
+    inputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    outputs: [
+      { name: "player", type: "address", internalType: "address" },
+      {
+        name: "result",
+        type: "uint8",
+        internalType: "enum PlasmaBattle.Result",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "confirmResult",
     inputs: [
-      { name: "_txHash", type: "bytes32", internalType: "bytes32" },
+      { name: "_battleId", type: "uint256", internalType: "uint256" },
       {
         name: "_result",
         type: "uint8",
@@ -17,9 +38,26 @@ export const PlasmaBattleAbi: any = [
   },
   {
     type: "function",
+    name: "getBothUnits",
+    inputs: [{ name: "_battleId", type: "uint256", internalType: "uint256" }],
+    outputs: [
+      { name: "", type: "uint256[5]", internalType: "uint256[5]" },
+      { name: "", type: "uint256[5]", internalType: "uint256[5]" },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "owner",
     inputs: [],
     outputs: [{ name: "", type: "address", internalType: "address" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "playerStage",
+    inputs: [{ name: "", type: "address", internalType: "address" }],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
   {
@@ -36,7 +74,7 @@ export const PlasmaBattleAbi: any = [
       { name: "_playerUnits", type: "uint256[5]", internalType: "uint256[5]" },
       { name: "_enemyUnits", type: "uint256[5]", internalType: "uint256[5]" },
     ],
-    outputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "nonpayable",
   },
   {
@@ -45,6 +83,19 @@ export const PlasmaBattleAbi: any = [
     inputs: [{ name: "newOwner", type: "address", internalType: "address" }],
     outputs: [],
     stateMutability: "nonpayable",
+  },
+  {
+    type: "event",
+    name: "BattleIdIncremented",
+    inputs: [
+      {
+        name: "battleId",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+    ],
+    anonymous: false,
   },
   {
     type: "event",

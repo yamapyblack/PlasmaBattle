@@ -11,6 +11,92 @@ export type Unit = {
   skillIds: number[];
 };
 
+export const initMainMembers: Unit[] = [
+  {
+    id: 1,
+    name: "Ant1",
+    imagePath: "1001",
+    life: 3,
+    attack: 2,
+    description: "",
+    skillIds: [],
+  },
+  {
+    id: 2,
+    name: "Ant2",
+    imagePath: "1002",
+    life: 3,
+    attack: 3,
+    description: "",
+    skillIds: [],
+  },
+  {
+    id: 3,
+    name: "Ant3",
+    imagePath: "1003",
+    life: 2,
+    attack: 4,
+    description: "",
+    skillIds: [],
+  },
+  {
+    id: 4,
+    name: "Ant4",
+    imagePath: "1004",
+    life: 4,
+    attack: 3,
+    description: "",
+    skillIds: [],
+  },
+  {
+    id: 5,
+    name: "Ant5",
+    imagePath: "1005",
+    life: 9,
+    attack: 4,
+    description: "",
+    skillIds: [],
+  },
+];
+export const initEnemyMembers: Unit[] = [
+  {
+    id: 1001,
+    name: "Alice",
+    imagePath: "1001",
+    life: 3,
+    attack: 3,
+    description: "Alice's description",
+    skillIds: [],
+  },
+  {
+    id: 1002,
+    name: "Bob",
+    imagePath: "1002",
+    life: 4,
+    attack: 4,
+    description: "Bob's description",
+    skillIds: [],
+  },
+  {
+    id: 1003,
+    name: "Charlie",
+    imagePath: "1003",
+    life: 4,
+    attack: 2,
+    description: "Charlie's description",
+    skillIds: [],
+  },
+  {
+    id: 1004,
+    name: "Charlie",
+    imagePath: "1004",
+    life: 4,
+    attack: 2,
+    description: "Charlie's description",
+    skillIds: [],
+  },
+];
+
 export type UnitVariable = {
   life: number;
   attack: number;
@@ -180,71 +266,3 @@ function unitsVariableReducer(
     }
   }
 }
-
-const initMainMembers: Unit[] = [
-  {
-    id: 1,
-    name: "Ant1",
-    imagePath: "1001",
-    life: 3,
-    attack: 2,
-    description: "",
-    skillIds: [],
-  },
-  // {
-  //   id: 4,
-  //   name: "Ant4",
-  //   imagePath: "1004",
-  //   life: 4,
-  //   attack: 3,
-  //   description: "",
-  //   skillIds: [],
-  // },
-  // {
-  //   id: 1,
-  //   name: "Ant1",
-  //   imagePath: "1001",
-  //   life: 3,
-  //   attack: 2,
-  //   description: "",
-  //   skillIds: [12],
-  // },
-];
-const initEnemyMembers: Unit[] = [
-  {
-    id: 1001,
-    name: "Alice",
-    imagePath: "1001",
-    life: 3,
-    attack: 3,
-    description: "Alice's description",
-    skillIds: [],
-  },
-  // {
-  //   id: 1002,
-  //   name: "Bob",
-  //   imagePath: "1002",
-  //   life: 4,
-  //   attack: 4,
-  //   description: "Bob's description",
-  //   skillIds: [],
-  // },
-  // {
-  //   id: 1003,
-  //   name: "Charlie",
-  //   imagePath: "1003",
-  //   life: 4,
-  //   attack: 2,
-  //   description: "Charlie's description",
-  //   skillIds: [],
-  // },
-  // {
-  //   id: 1003,
-  //   name: "Charlie",
-  //   imagePath: "1003",
-  //   life: 4,
-  //   attack: 2,
-  //   description: "Charlie's description",
-  //   skillIds: [],
-  // },
-];

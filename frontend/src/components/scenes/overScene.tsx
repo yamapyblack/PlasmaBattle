@@ -2,8 +2,34 @@ import { useState } from "react";
 import Image from "next/image";
 import { Result } from "../../lib/interfaces/interface";
 import { Scene } from "../../pages/index";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { PlasmaBattleAbi } from "src/constants/plasmaBattleAbi";
+import addresses from "src/constants/addresses";
 
-const OverScene = ({ setScene, result }) => {
+const OverScene = ({ setScene, result, txHash }) => {
+  const { data: hash, writeContract } = useWriteContract();
+  const { isLoading } = useWaitForTransactionReceipt({ hash: hash });
+
+  const confirm = async () => {
+    writeContract(
+      {
+        address: addresses.PlasmaBattle as `0x${string}`,
+        abi: PlasmaBattleAbi,
+        functionName: "confirmResult",
+        args: [txHash, result, signature],
+      },
+      {
+        onSuccess: () => {
+          console.log("onSuccess");
+          setScene(Scene.Battle);
+        },
+        onError: (e) => {
+          console.error(e);
+        },
+      }
+    );
+  };
+
   return (
     <div className="flex flex-col items-center m-auto">
       <header className="p-2 w-3/4">
@@ -48,7 +74,13 @@ const OverScene = ({ setScene, result }) => {
           <div className="text-center">
             <button
               className="bg-sub font-bold px-8 py-3 rounded-md text-decoration-none"
-              onClick={() => setScene(Scene.Battle)}
+              onClick={() => {
+                if (result == Result.WIN) {
+                  confirm();
+                } else {
+                  setScene(Scene.Battle);
+                }
+              }}
             >
               {result == Result.WIN ? "CONFIRM" : "CONTINUE"}
             </button>
