@@ -30,12 +30,32 @@ export const PlasmaBattleAbi: any = [
   },
   {
     type: "function",
+    name: "getBattleInfo",
+    inputs: [{ name: "_battleId", type: "uint256", internalType: "uint256" }],
+    outputs: [
+      { name: "", type: "address", internalType: "address" },
+      { name: "", type: "uint8", internalType: "uint8" },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "getBothUnits",
     inputs: [{ name: "_battleId", type: "uint256", internalType: "uint256" }],
     outputs: [
       { name: "", type: "uint256[5]", internalType: "uint256[5]" },
       { name: "", type: "uint256[5]", internalType: "uint256[5]" },
     ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "isValidSignature",
+    inputs: [
+      { name: "hash", type: "bytes32", internalType: "bytes32" },
+      { name: "signature", type: "bytes", internalType: "bytes" },
+    ],
+    outputs: [{ name: "", type: "bool", internalType: "bool" }],
     stateMutability: "view",
   },
   {

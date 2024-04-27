@@ -27,7 +27,7 @@ export const postBattleAllApi = async (
 export const getBattleResult = async (_battleId: number) => {
   console.log("getBattleResult");
   //url parameter craft_id
-  const url = `/api/battleResult/?battleId=${_battleId}`;
+  const url = `/api/battleResultApi/?battleId=${_battleId}`;
   try {
     const response = await fetch(url, {
       headers: {

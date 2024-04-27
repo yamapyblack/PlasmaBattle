@@ -2,7 +2,11 @@ import { useState } from "react";
 import Image from "next/image";
 import { Result } from "../../lib/interfaces/interface";
 import { Scene } from "../../pages/index";
-import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import {
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useReadContract,
+} from "wagmi";
 import { PlasmaBattleAbi } from "src/constants/plasmaBattleAbi";
 import addresses from "src/constants/addresses";
 import { getBattleResult } from "../../lib/data/apiHandler";
@@ -10,10 +14,14 @@ import { getBattleResult } from "../../lib/data/apiHandler";
 const OverScene = ({ setScene, result, txHash }) => {
   const { data: hash, writeContract } = useWriteContract();
   const { isLoading } = useWaitForTransactionReceipt({ hash: hash });
+  const dataBattleId = useReadContract({
+    abi: PlasmaBattleAbi,
+    address: addresses.PlasmaBattle as `0x${string}`,
+    functionName: "battleId",
+  });
 
   const confirm = async () => {
-    //TODO battleId
-    const battleId = 1;
+    const battleId = Number(dataBattleId.data);
     const _res = await getBattleResult(battleId);
     console.log("res", _res);
 
