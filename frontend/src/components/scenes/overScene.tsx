@@ -35,7 +35,8 @@ const OverScene = ({ setScene, result, txHash }) => {
       {
         onSuccess: () => {
           console.log("onSuccess");
-          setScene(Scene.Battle);
+          //TODO revive
+          // setScene(Scene.Battle);
         },
         onError: (e) => {
           console.error(e);
@@ -49,7 +50,7 @@ const OverScene = ({ setScene, result, txHash }) => {
       <header className="p-2 w-3/4">
         <div className="flex justify-between items-center w-20 rounded-md bg-darkgray mt-4 pl-2 pr-2">
           <Image src="/images/edit/stage.png" alt="" width={16} height={16} />
-          <div className="text-lg font-bold">999</div>
+          <div className="text-lg font-bold">4</div>
         </div>
       </header>
       <main
@@ -89,6 +90,7 @@ const OverScene = ({ setScene, result, txHash }) => {
             <button
               className="bg-sub font-bold px-8 py-3 rounded-md text-decoration-none"
               onClick={() => {
+                if (isLoading) return;
                 if (result == Result.WIN) {
                   confirm();
                 } else {
@@ -96,7 +98,11 @@ const OverScene = ({ setScene, result, txHash }) => {
                 }
               }}
             >
-              {result == Result.WIN ? "CONFIRM" : "CONTINUE"}
+              {isLoading
+                ? "Loading..."
+                : result == Result.WIN
+                  ? "CONFIRM"
+                  : "CONTINUE"}
             </button>
           </div>
         </section>
